@@ -66,23 +66,27 @@ def second_layer():
     rect(screen, balconygray, (189, 265, 20, 50))
     rect(screen, balconygray, (251, 265, 20, 50))
     rect(screen, balconygray, (313, 265, 20, 50))
-def ghost():
+def ghost(x, y, i):
     #привидение
-    #голова, глаза, зрачки
-    circle(screen, ghostgray, (475, 520), 20)
-    circle(screen, lightblue, (468, 520), 6)
-    circle(screen, lightblue, (482, 518), 6)
-    circle(screen, black, (467, 520), 2)
-    circle(screen, black, (481, 518), 2)
-    ellipse(screen, white, (468,518,5, 3))
-    ellipse(screen, white, (482,516,5, 3))
     #тело
-    ghostbody = [(475-19*np.sin(45*np.pi/180),520+19*np.sin(45*np.pi/180)),(430,600),(455,590),(475, 610),(495, 595),(525, 615),(535,600),(545,585),(560, 575),(555, 570),(475+19, 520)]
+    ghostbody = [(x-19*np.sin(45*np.pi/180)*i,y+abs(19*np.sin(45*np.pi/180)*i)),
+                 (x-45*i,y+abs(80*i)),(x-20*i,y+abs(70*i)),(x, y+abs(90*i)),
+                 (x+20*i, y+abs(75*i)),(x+50*i, y+abs(95*i)),
+                 (x+60*i,y+abs(80*i)),(x+70*i,y+abs(65*i)),(x+85*i, y+abs(55*i)),
+                 (x+80*i, y+abs(50*i)),(x+19*i, y)]
     polygon(screen, ghostgray, ghostbody)
+    #голова, глаза, зрачки
+    circle(screen, ghostgray, (x, y), abs(20*i))
+    circle(screen, lightblue, (x-7*i, y), abs(6*i))
+    circle(screen, lightblue, (x+7*i, y-abs(2*i)), abs(6*i))
+    circle(screen, black, (x-8*i, y), abs(2*i))
+    circle(screen, black, (x+6*i, y-abs(2*i)), abs(2*i))
+    ellipse(screen, white, (x-7*i,y-abs(2*i), abs(5*i), abs(3*i)))
+    ellipse(screen, white, (x+7*i,y-abs(4*i), abs(5*i), abs(3*i)))
 background()
 first_layer()
 second_layer()
-ghost()
+ghost(475, 520, 1)
 
 pygame.display.update()
 
