@@ -31,7 +31,7 @@ class ball():
             self.x+self.r,
             self.y+self.r
             )
-    def move(self):
+    def move(self):##
         if self.y<=500:
             self.vy-=1.2
             self.y-=self.vy
@@ -51,7 +51,7 @@ class ball():
             if self.x>780:
                 self.vx=-self.vx/2
                 self.x=779
-    def hittest(self,ob):
+    def hittest(self,ob):##
         if abs(ob.x-self.x)<=(self.r+ob.r)and abs(ob.y-self.y)<=(self.r+ob.r):
             return True
         else:
@@ -98,7 +98,7 @@ class target():
     def __init__(self):
         self.points=0
         self.id=canv.create_oval(0,0,0,0)
-        self.id_points=canv.create_text(30,30,text=self.points,font='28')
+        self.id_points=canv.create_text(30,30,text=self.points,font='28')#
         self.new_target()
         self.live=1
     def new_target(self):
@@ -112,7 +112,35 @@ class target():
         canv.coords(self.id,-10,-10,-10,-10)
         self.points+=points
         canv.itemconfig(self.id_points,text=self.points)
+    def move_target(self):
+        if self.live == 1:
+            canv.delete(self.id)
+            self.x += self.vx
+            self.y -= self.vy
+            self.id = canv.create_oval(
+                self.x - self.r,
+                self.y - self.r,
+                self.x + self.r,
+                self.y + self.r,
+                fill=self.color
+            )
+            self.vy -= 2
+            if (self.x - self.r <= 610):
+                self.vx = -self.vx
+                self.x = self.x + self.r + 1
+            if (self.x - self.r >= 770):
+                self.vx = -self.vx
+                self.x = self.x - self.r - 1
+            if (self.y - self.r <= 310):
+                self.vy = -0.7 * self.vy
+                self.y = self.y + self.r + 1
+            if (self.y - self.r >= 540):
+                self.vy = -0.7 * self.vy
+                self.y = self.y - self.r - 1
+        else:
+            pass
 t1=target()
+t2=target()
 screen1=canv.create_text(400,300,text='',font='28')
 g1=gun()
 bullet=0
@@ -127,15 +155,34 @@ def new_game(event=''):
     canv.bind('<Motion>',g1.targetting)
     z=0.03
     t1.live=1
-    while t1.live or balls:
+    t2.live=1
+    while t1.live or balls or t2.live:
+        t1.move_target()
+        t2.move_target()
         for b in balls:
             b.move()
-            if b.hittest(t1)and t1.live:
-                t1.live=0
+            if b.hittest(t1) and t1.live and t2.live:
+                t1.live = 0
                 t1.hit()
-                canv.bind('<Button-1>','')
-                canv.bind('<ButtonRelease-1>','')
-                canv.itemconfig(screen1,text='Вы уничтожили цель за '+str(bullet)+' выстрелов')
+            if b.hittest(t2) and t2.live and t1.live:
+                t2.live = 0
+                t2.hit()
+            if b.hittest(t2) and t2.live and t1.live == 0:
+                t1.live = 0
+                t2.live = 0
+                t2.hit()
+                t1.hit()
+                canv.bind('<Button-1>', '')
+                canv.bind('<ButtonRelease-1>', '')
+                canv.itemconfig(screen1, text='Вы уничтожили обе цели за ' + str(bullet) + ' выстрелов')
+            if b.hittest(t1) and t1.live and t2.live == 0:
+                t1.live = 0
+                t2.live = 0
+                t2.hit()
+                t1.hit()
+                canv.bind('<Button-1>', '')
+                canv.bind('<ButtonRelease-1>', '')
+                canv.itemconfig(screen1, text='Вы уничтожили обе цели за ' + str(bullet) + ' выстрелов')
         canv.update()
         time.sleep(0.03)
         g1.targetting()
